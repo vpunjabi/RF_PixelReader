@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "RF Pixel Reader",
+  "description": "Detects RF pixels and displays their param values",
+  "version": "1.0",
+  "permissions": [
+    "webNavigation",
+    "webRequest",
+    "*://*.rfihub.com/"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  }
+}
