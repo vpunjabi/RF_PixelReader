@@ -9,6 +9,7 @@
 var reset = false;
 var defaultNoData = "No RF Pixel Data";
 var urlData = defaultNoData;
+var pixelCounter = 0;
 
 
 // https://20574255p.rfihub.com/ca.gif?rb=9537&ca=20574255&ra=3461315557360649&t=home  HTTP/1.1 200 OK
@@ -22,6 +23,7 @@ chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){
 		for (var i = 0; i < views.length; i++) {
 		        views[i].document.getElementById('accordion').innerHTML = urlData;
 		}
+		chrome.runtime.sendMessage({value:"refreshAccordian"});
 	}
 });
 
@@ -43,9 +45,13 @@ chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){
 // 	}
 // });
 
+chrome.browserAction.setBadgeBackgroundColor({color: "#36B7F9"});
+
 chrome.webNavigation.onCommitted.addListener(function(details){
-	if(details.transitionQualifiers == "from_address_bar" || details.transitionType == "reload" || details.transitionType == "link" || details.transitionType == "form_submit"){
+	if(details.transitionType == "typed" || details.transitionQualifiers == "from_address_bar" || details.transitionType == "reload" || details.transitionType == "link" || details.transitionType == "form_submit"){
 		urlData = defaultNoData;
+		pixelCounter = 0;
+		chrome.browserAction.setBadgeText({text: ""});
 	}
 });
 
@@ -56,6 +62,7 @@ function(details) {
 	}
 	//urlData += details.url + "  " + details.statusLine;
 	urlData += formatData(details);
+	chrome.browserAction.setBadgeText({text: "" + ++pixelCounter});
 
   //alert(document.getElementById("container").innerHTML);
   //document.getElementById("container").innerHTML = details.url + "\n" + document.getElementById("container").innerHTML;
@@ -66,42 +73,55 @@ function(details) {
 
 
 function formatData(pageDetails){
-	var returnVal = "<h3>!{HEADING}</h3><div><p>!{DETAILS}</p></div>";
+	var returnVal = "<h3>!{PixelId}<span class='right'>!{HTTPCode}</span></h3><div><p>!{DETAILS}</p></div>";
+
+	//return "> " + getPixelId(pageDetails.url);
 
 	if(pageDetails && pageDetails.url && pageDetails.url.length > 0){
-		returnVal.replace("!{HEADING}", getPixelId(pageDetails.url) + "\t" + getStatusCode(pageDetails.statusLine));
-		return returnVal;
-	}
-	return "";
+		returnVal = returnVal.replace("!{PixelId}", getPixelId(pageDetails.url)).replace("!{HTTPCode}", getStatusCode(pageDetails.statusLine));
 
-	// <h3>Section 1</h3>
-	// 	<div>
-	// 		<p>
-	// 		Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
-	// 		ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
-	// 		amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
-	// 		odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
-	// 		</p>
-	// 	</div>
+		var params = getPixelDetails(pageDetails.url);
+		for(var i in params){
+			params[i] = "<span class='left'>" + (params[i] + "").split("=")[0] + "</span><span class='right'>" + (params[i] + "").split("=")[1] + "</span>";
+		}
+
+		returnVal = returnVal.replace("!{DETAILS}", params.join("<br>"));
+	}else{
+		returnVal = "";
+	}
+	return returnVal;
 }
 
 function getPixelId(pageUrl){
 	var patt1 = /\d+p/g;
 	var result = pageUrl.match(patt1);
 
-	if(result.length > 0){
-		result = result.substring(0, result.length - 1);
+	if(result.length > 0 && result[0].length > 0){
+		result = result[0].substring(0, result[0].length - 1);
+	}else{
+		result = "";
 	}
 	return result;
 }
 
 function getStatusCode(statusLine){
 	var patt1 = /\d{3}/g;
-	var result = pageUrl.match(patt1);
+	var result = statusLine.match(patt1);
 
+	if(result.length < 1 || result[0].length < 1){
+		result = "";
+	}
 	return result;
 }
 
+function getPixelDetails(pageUrl){
+	var params = null;
+
+	if(pageUrl.length > 0 && pageUrl.split("?")[1]){
+		params = (pageUrl.split("?")[1] + "").split("&");
+	}
+	return params;
+}
 
 
 

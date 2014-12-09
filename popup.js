@@ -10,3 +10,10 @@ $(function() {
 });
 
 chrome.runtime.sendMessage({value:"getPixelData"});
+
+
+chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){
+  if(message.value == "refreshAccordian"){
+    $( "#accordion" ).accordion( "refresh" );
+  }
+});
