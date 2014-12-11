@@ -57,12 +57,14 @@ chrome.webNavigation.onCommitted.addListener(function(details){
 
 chrome.webRequest.onHeadersReceived.addListener(
 function(details) {
-	if(urlData == defaultNoData){
-		urlData = "";
+	if(isPixelUrl(details.url)){
+		if(urlData == defaultNoData){
+			urlData = "";
+		}
+		//urlData += details.url + "  " + details.statusLine;
+		urlData += formatData(details);
+		chrome.browserAction.setBadgeText({text: "" + ++pixelCounter});
 	}
-	//urlData += details.url + "  " + details.statusLine;
-	urlData += formatData(details);
-	chrome.browserAction.setBadgeText({text: "" + ++pixelCounter});
 
   //alert(document.getElementById("container").innerHTML);
   //document.getElementById("container").innerHTML = details.url + "\n" + document.getElementById("container").innerHTML;
@@ -70,7 +72,13 @@ function(details) {
 {urls: ["<all_urls>"]});
 
 
-
+function isPixelUrl(url){
+	var returnVal = false;
+	if(url && url.length > 0 && getPixelId(url).length > 0 && url.indexOf("rfihub.com/ca.gif") >= 0){
+		returnVal = true;
+	}
+	return returnVal;
+}
 
 function formatData(pageDetails){
 	var returnVal = "<h3>!{PixelId}<span class='right'>!{HTTPCode}</span></h3><div><p>!{DETAILS}</p></div>";

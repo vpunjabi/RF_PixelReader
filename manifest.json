@@ -5,6 +5,7 @@
   "description": "Detects RF pixels and displays their param values",
   "version": "1.0",
   "permissions": [
+    "identity",
     "webNavigation",
     "webRequest",
     "*://*.rfihub.com/"
