@@ -90,7 +90,7 @@ function formatData(pageDetails){
 
 		var params = getPixelDetails(pageDetails.url);
 		for(var i in params){
-			params[i] = "<span class='left'>" + (params[i] + "").split("=")[0] + "</span><span class='right'>" + (params[i] + "").split("=")[1] + "</span>";
+			params[i] = "<span class='left'>" + (params[i] + "").split("=")[0] + "</span><span style='color:#1fdc5d' class='right'>" + (params[i] + "").split("=")[1] + "</span>";
 		}
 
 		returnVal = returnVal.replace("!{DETAILS}", params.join("<br>"));
