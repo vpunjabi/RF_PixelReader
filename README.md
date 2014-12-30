@@ -1,8 +1,8 @@
 RF_PixelReader
 ==============
-Here is the preliminary document explanining how to download and install the Rocket Fuel Pixel Reader ("Insert clever Name here"):
+Here is the preliminary document explanining how to download and install the Rocket Fuel Pixel Reader ("Insert clever name here"):
 
-Load the extension
+<b>Load the extension</b>
 
 Visit chrome://extensions in your browser (or open up the Chrome menu by clicking the icon to the far right of the Omnibox:  The menu's icon is three horizontal bars.. and select Extensions under the Tools menu to get to the same place).
 
