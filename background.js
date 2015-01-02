@@ -81,7 +81,7 @@ function isPixelUrl(url){
 }
 
 function formatData(pageDetails){
-	var returnVal = "<h3>!{PixelId}<span class='right'>!{HTTPCode}</span></h3><div><p>!{DETAILS}</p></div>";
+	var returnVal = "<h3>!{PixelId}<span class='right'>!{HTTPCode}</span></h3><div><p>!{DETAILS}</p><p>!{PixelURL}</p></div>";
 
 	//return "> " + getPixelId(pageDetails.url);
 
@@ -93,7 +93,7 @@ function formatData(pageDetails){
 			params[i] = "<span class='left'>" + (params[i] + "").split("=")[0] + "</span><span style='color:#1fdc5d' class='right'>" + (params[i] + "").split("=")[1] + "</span>";
 		}
 
-		returnVal = returnVal.replace("!{DETAILS}", params.join("<br>"));
+		returnVal = returnVal.replace("!{DETAILS}", params.join("<br>")).replace("!{PixelURL}", "<span class='left'>Request URL:</span><span style='color:#1fdc5d' class='right'><INPUT style='border-width: 0px' size='35' READONLY VALUE='" + pageDetails.url + "'></span>");;
 	}else{
 		returnVal = "";
 	}
@@ -130,9 +130,3 @@ function getPixelDetails(pageUrl){
 	}
 	return params;
 }
-
-
-
-
-
-
