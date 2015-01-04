@@ -74,7 +74,7 @@ function(details) {
 
 function isPixelUrl(url){
 	var returnVal = false;
-	if(url && url.length > 0 && getPixelId(url).length > 0 && url.indexOf("rfihub.com/ca.gif") >= 0){
+	if(url && url.length > 0 && getPixelId(url).length > 0 && url.indexOf("p.rfihub.com/ca") >= 0){
 		returnVal = true;
 	}
 	return returnVal;
@@ -89,11 +89,12 @@ function formatData(pageDetails){
 		returnVal = returnVal.replace("!{PixelId}", getPixelId(pageDetails.url)).replace("!{HTTPCode}", getStatusCode(pageDetails.statusLine));
 
 		var params = getPixelDetails(pageDetails.url);
+		var pixelDisplay = [];
 		for(var i in params){
-			params[i] = "<span class='left'>" + (params[i] + "").split("=")[0] + "</span><span style='color:#1fdc5d' class='right'>" + (params[i] + "").split("=")[1] + "</span>";
+			pixelDisplay.push("<span class='left'>" + (i + "") + "</span><span style='color:#1fdc5d' class='right'>" + (params[i] + "") + "</span>");
 		}
 
-		returnVal = returnVal.replace("!{DETAILS}", params.join("<br>")).replace("!{PixelURL}", "<span class='left'>Request URL:</span><span style='color:#1fdc5d' class='right'><INPUT style='border-width: 0px' size='35' READONLY VALUE='" + pageDetails.url + "'></span>");;
+		returnVal = returnVal.replace("!{DETAILS}", pixelDisplay.join("<br>")).replace("!{PixelURL}", "<span class='left'>Request URL:</span><span style='color:#1fdc5d' class='right'><INPUT style='border-width: 0px' size='35' READONLY VALUE='" + pageDetails.url + "'></span>");;
 	}else{
 		returnVal = "";
 	}
@@ -101,15 +102,11 @@ function formatData(pageDetails){
 }
 
 function getPixelId(pageUrl){
-	var patt1 = /\d+p/g;
-	var result = pageUrl.match(patt1);
-
-	if(result.length > 0 && result[0].length > 0){
-		result = result[0].substring(0, result[0].length - 1);
-	}else{
-		result = "";
+	var params = getPixelDetails(pageUrl);
+	if(params && params["ca"]){
+		return params["ca"];
 	}
-	return result;
+	return null;
 }
 
 function getStatusCode(statusLine){
@@ -123,10 +120,13 @@ function getStatusCode(statusLine){
 }
 
 function getPixelDetails(pageUrl){
-	var params = null;
+	var params = {};
 
 	if(pageUrl.length > 0 && pageUrl.split("?")[1]){
-		params = (pageUrl.split("?")[1] + "").split("&");
+		var temp = (pageUrl.split("?")[1] + "").split("&");
+		for(var i in temp){
+			params["" + (temp[i] + "").split("=")[0]] = ""+ (temp[i] + "").split("=")[1];
+		}
 	}
 	return params;
 }
