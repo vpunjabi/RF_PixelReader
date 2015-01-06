@@ -91,10 +91,10 @@ function formatData(pageDetails){
 		var params = getPixelDetails(pageDetails.url);
 		var pixelDisplay = [];
 		for(var i in params){
-			pixelDisplay.push("<span class='left'>" + (i + "") + "</span><span style='color:#1fdc5d' class='right'>" + (params[i] + "") + "</span>");
+			pixelDisplay.push("<span class='left'>" + (i + "") + "</span><span class='right'>" + (params[i] + "") + "</span>");
 		}
 
-		returnVal = returnVal.replace("!{DETAILS}", pixelDisplay.join("<br>")).replace("!{PixelURL}", "<span class='left'>Request URL:</span><span style='color:#1fdc5d' class='right'><INPUT style='border-width: 0px' size='35' READONLY VALUE='" + pageDetails.url + "'></span>");;
+		returnVal = returnVal.replace("!{DETAILS}", pixelDisplay.join("<br>")).replace("!{PixelURL}", "<br /><span class='left' style='font-size:12px'><strong>Request URL:</strong></span><br /><span class='left' style='font-size:11px'><INPUT style='border-width: 0px' size='60' READONLY VALUE='" + pageDetails.url + "'></span>");;
 	}else{
 		returnVal = "";
 	}
