@@ -48,7 +48,7 @@ chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){
 chrome.browserAction.setBadgeBackgroundColor({color: "#36B7F9"});
 
 chrome.webNavigation.onCommitted.addListener(function(details){
-	if(details.transitionType == "typed" || details.transitionQualifiers == "from_address_bar" || details.transitionType == "reload" || details.transitionType == "link" || details.transitionType == "form_submit"){
+	if(details.transitionType == "start_page" || details.transitionType == "typed" || details.transitionQualifiers == "from_address_bar" || details.transitionType == "reload" || details.transitionType == "link" || details.transitionType == "form_submit"){
 		urlData = defaultNoData;
 		pixelCounter = 0;
 		chrome.browserAction.setBadgeText({text: ""});
@@ -91,16 +91,38 @@ function formatData(pageDetails){
 		var params = getPixelDetails(pageDetails.url);
 		var pixelDisplay = [];
 		for(var i in params){
-			pixelDisplay.push("<span class='left'>" + (i + "") + "</span><span class='right'>" + (params[i] + "") + "</span>");
+			var rowHTML = "";
+			rowHTML = formatRowDataToHTML(i, "left", 10) + formatRowDataToHTML(params[i], "right", 25);
+			if(rowHTML.length){
+				pixelDisplay.push(rowHTML);
+			}
 		}
 
-		returnVal = returnVal.replace("!{DETAILS}", pixelDisplay.join("<br>")).replace("!{PixelURL}", "<br /><span class='left' style='font-size:12px'><strong>Request URL:</strong></span><br /><span class='left' style='font-size:11px'><INPUT style='border-width: 0px' size='60' READONLY VALUE='" + pageDetails.url + "'></span>");;
+		//returnVal = returnVal.replace("!{DETAILS}", pixelDisplay.join("<br>")).replace("!{PixelURL}", "<br /><span class='left' style='font-size:12px'><strong>Request URL:</strong></span><br /><span class='left' style='font-size:11px'><INPUT style='border-width: 1px' size='50' READONLY VALUE='" + pageDetails.url + "'></span>");;
+		returnVal = returnVal.replace("!{DETAILS}", pixelDisplay.join("<br>")).replace("!{PixelURL}", "<br /><span class='left' style='font-size:12px'><strong>Request URL:</strong></span><br />" + formatRowDataToHTML(pageDetails.url, "left", 42));;
 	}else{
 		returnVal = "";
 	}
 	return returnVal;
 }
-
+//maxCharLength before switching to input text field
+function formatRowDataToHTML(dataVal, align, maxCharLength){
+	var returnVal = "";
+	if((dataVal + "").length > 0){
+		if((align + "").toLowerCase() == "right"){
+			returnVal += "<span class='right'>";
+		}else{
+			returnVal += "<span class='left'>";
+		}
+		if((dataVal + "").length > maxCharLength){
+			returnVal += "<INPUT style='border-width: 1px' size='" + maxCharLength + "' READONLY VALUE='" + (dataVal + "") + "'>";
+		}else{
+			returnVal += (dataVal + "");
+		}
+		returnVal += "</span>";
+	}
+	return returnVal;
+}
 function getPixelId(pageUrl){
 	var params = getPixelDetails(pageUrl);
 	if(params && params["ca"]){
