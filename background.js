@@ -46,7 +46,7 @@ function isPixelUrl(url){
 	return returnVal;
 }
 
-var colorSwatch = ["0000FF", "00CCFF"];
+var colorSwatch = ["#0000FF", "#00CCFF"];
 var rowCounter;
 
 function formatData(pageDetails){
@@ -86,7 +86,11 @@ function formatRowDataToHTML(dataVal, align, maxCharLength, color){
 		}
 		returnVal += ">";
 		if((dataVal + "").length > maxCharLength){
-			returnVal += "<INPUT style='border-width: 1px' size='" + maxCharLength + "' READONLY VALUE='" + (dataVal + "") + "'>";
+			if(("" + color).length){
+				returnVal += "<INPUT READONLY type=\"text\" STYLE=\"border-width: 1px; color: " + color + ";\" size=\"" + maxCharLength + "\" value=\"" + (dataVal + "") + "\">";
+			}else{
+				returnVal += "<INPUT style='border-width: 1px' size='" + maxCharLength + "' READONLY VALUE='" + (dataVal + "") + "'>";
+			}
 		}else{
 			returnVal += (dataVal + "");
 		}
