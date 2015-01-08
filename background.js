@@ -1,20 +1,7 @@
-// chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){
-// 	if(message.value == "getPixelData"){
-// 		alert("inside if");
-// 		var resp = {value: "awesome"};
-// 		sendResponse(resp);
-// 	}
-// });
-
 var reset = false;
 var defaultNoData = "No RF Pixel Data";
 var urlData = defaultNoData;
 var pixelCounter = 0;
-
-
-// https://20574255p.rfihub.com/ca.gif?rb=9537&ca=20574255&ra=3461315557360649&t=home  HTTP/1.1 200 OK
-// https://20560241p.rfihub.com/ca.gif?rb=9537&ca=20560241&ra=635531645644345000  HTTP/1.1 200 OK
-
 
 
 chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){
@@ -27,23 +14,6 @@ chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){
 	}
 });
 
-// chrome.webNavigation.onBeforeNavigate.addListener(function(details){
-// 	if(reset){
-// 		urlData = "";
-// 		reset = false;
-// 	}
-// });
-
-// chrome.webNavigation.onDOMContentLoaded.addListener(function(details){
-// 	reset = true;
-// });
-
-// chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
-// 	//alert(changeInfo.url);
-// 	if(changeInfo.url){
-// 		urlData = "";
-// 	}
-// });
 
 chrome.browserAction.setBadgeBackgroundColor({color: "#36B7F9"});
 
@@ -61,13 +31,9 @@ function(details) {
 		if(urlData == defaultNoData){
 			urlData = "";
 		}
-		//urlData += details.url + "  " + details.statusLine;
 		urlData += formatData(details);
 		chrome.browserAction.setBadgeText({text: "" + ++pixelCounter});
 	}
-
-  //alert(document.getElementById("container").innerHTML);
-  //document.getElementById("container").innerHTML = details.url + "\n" + document.getElementById("container").innerHTML;
 },
 {urls: ["<all_urls>"]});
 
@@ -80,10 +46,12 @@ function isPixelUrl(url){
 	return returnVal;
 }
 
+var colorSwatch = ["0000FF", "00CCFF"];
+var rowCounter;
+
 function formatData(pageDetails){
 	var returnVal = "<h3>!{PixelId}<span class='right'>!{HTTPCode}</span></h3><div><p>!{DETAILS}</p><p>!{PixelURL}</p></div>";
-
-	//return "> " + getPixelId(pageDetails.url);
+	rowCounter = 0;
 
 	if(pageDetails && pageDetails.url && pageDetails.url.length > 0){
 		returnVal = returnVal.replace("!{PixelId}", getPixelId(pageDetails.url)).replace("!{HTTPCode}", getStatusCode(pageDetails.statusLine));
@@ -92,13 +60,12 @@ function formatData(pageDetails){
 		var pixelDisplay = [];
 		for(var i in params){
 			var rowHTML = "";
-			rowHTML = formatRowDataToHTML(i, "left", 10) + formatRowDataToHTML(params[i], "right", 25);
+			var rowColor = (rowCounter++)%colorSwatch.length;
+			rowHTML = formatRowDataToHTML(i, "left", 10, colorSwatch[rowColor]) + formatRowDataToHTML(params[i], "right", 25, colorSwatch[rowColor]);
 			if(rowHTML.length){
 				pixelDisplay.push(rowHTML);
 			}
 		}
-
-		//returnVal = returnVal.replace("!{DETAILS}", pixelDisplay.join("<br>")).replace("!{PixelURL}", "<br /><span class='left' style='font-size:12px'><strong>Request URL:</strong></span><br /><span class='left' style='font-size:11px'><INPUT style='border-width: 1px' size='50' READONLY VALUE='" + pageDetails.url + "'></span>");;
 		returnVal = returnVal.replace("!{DETAILS}", pixelDisplay.join("<br>")).replace("!{PixelURL}", "<br /><span class='left' style='font-size:12px'><strong>Request URL:</strong></span><br />" + formatRowDataToHTML(pageDetails.url, "left", 42));;
 	}else{
 		returnVal = "";
@@ -106,14 +73,18 @@ function formatData(pageDetails){
 	return returnVal;
 }
 //maxCharLength before switching to input text field
-function formatRowDataToHTML(dataVal, align, maxCharLength){
+function formatRowDataToHTML(dataVal, align, maxCharLength, color){
 	var returnVal = "";
 	if((dataVal + "").length > 0){
 		if((align + "").toLowerCase() == "right"){
-			returnVal += "<span class='right'>";
+			returnVal += "<span class='right'";
 		}else{
-			returnVal += "<span class='left'>";
+			returnVal += "<span class='left'";
 		}
+		if(("" + color).length){
+			returnVal += "style=\"color:" + color + "\"";
+		}
+		returnVal += ">";
 		if((dataVal + "").length > maxCharLength){
 			returnVal += "<INPUT style='border-width: 1px' size='" + maxCharLength + "' READONLY VALUE='" + (dataVal + "") + "'>";
 		}else{
