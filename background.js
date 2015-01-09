@@ -46,7 +46,7 @@ function isPixelUrl(url){
 	return returnVal;
 }
 
-var colorSwatch = ["#0000FF", "#00CCFF"];
+var colorSwatch = ["#00CCFF", "#99CCFF"];
 var rowCounter;
 
 function formatData(pageDetails){
@@ -58,36 +58,59 @@ function formatData(pageDetails){
 
 		var params = getPixelDetails(pageDetails.url);
 		var pixelDisplay = [];
+
+
+
+		var details = '<table cellspacing="0" cellpadding="6" style="width:100%; font-size:14px">';
 		for(var i in params){
-			var rowHTML = "";
 			var rowColor = (rowCounter++)%colorSwatch.length;
-			rowHTML = formatRowDataToHTML(i, "left", 10, colorSwatch[rowColor]) + formatRowDataToHTML(params[i], "right", 25, colorSwatch[rowColor]);
-			if(rowHTML.length){
-				pixelDisplay.push(rowHTML);
-			}
+			details += "<tr style='background-color: " + colorSwatch[rowColor] + ";'>";
+			var rowHTML = "";
+			//rowHTML = "<div style='background-color: " + colorSwatch[rowColor] + ";'>" + formatRowDataToHTML(i, "left", 10) + formatRowDataToHTML(params[i], "right", 25) + "</div>";
+			details += "<td align='left'>" + formatRowDataToHTML(i, 10, colorSwatch[rowColor]) + "</td>";
+			details += "<td align='right'>" + formatRowDataToHTML(params[i], 25, colorSwatch[rowColor])  + "</td>";
+			//rowHTML = "<div style='background-color: " + colorSwatch[rowColor] + ";'>" + formatRowDataToHTML(i, "left", 10) + formatRowDataToHTML(params[i], "right", 25) + "</div>";
+			// if(rowHTML.length){
+			// 	pixelDisplay.push(rowHTML);
+			// }
+			details += "</tr>";
 		}
-		returnVal = returnVal.replace("!{DETAILS}", pixelDisplay.join("<br>")).replace("!{PixelURL}", "<br /><span class='left' style='font-size:12px'><strong>Request URL:</strong></span><br />" + formatRowDataToHTML(pageDetails.url, "left", 42));;
+		details += "</table>";
+		returnVal = returnVal.replace("!{DETAILS}", details).replace("!{PixelURL}", "<br /><span class='left' style='font-size:12px'><strong>Request URL:</strong></span><br />" + formatRowDataToHTML(pageDetails.url, 42));
 	}else{
 		returnVal = "";
 	}
 	return returnVal;
 }
 //maxCharLength before switching to input text field
-function formatRowDataToHTML(dataVal, align, maxCharLength, color){
+function formatRowDataToHTML(dataVal, maxCharLength, color, align){
 	var returnVal = "";
+
+	// 	<style type="text/css">
+	// .rightText {
+	//     position: absolute;
+	//     right: 20px;
+	// }
+	// .leftText {
+	//     position: absolute;
+	//     left: 20px;
+	// }
+
+	// </style>
 	if((dataVal + "").length > 0){
 		if((align + "").toLowerCase() == "right"){
-			returnVal += "<span class='right'";
+			//returnVal += "<span style='position: absolute; right:40px;'";
+			returnVal += "<span style='right'";
 		}else{
 			returnVal += "<span class='left'";
 		}
-		if(("" + color).length){
-			returnVal += "style=\"color:" + color + "\"";
-		}
+		// if(color && color.length){
+		// 	returnVal += "style=\"color:" + color + "\"";
+		// }
 		returnVal += ">";
 		if((dataVal + "").length > maxCharLength){
-			if(("" + color).length){
-				returnVal += "<INPUT READONLY type=\"text\" STYLE=\"border-width: 1px; color: " + color + ";\" size=\"" + maxCharLength + "\" value=\"" + (dataVal + "") + "\">";
+			if(color && color.length){
+				returnVal += "<INPUT READONLY type=\"text\" STYLE=\"border-width: 1px; background-color: " + color + ";\" size=\"" + maxCharLength + "\" value=\"" + (dataVal + "") + "\">";
 			}else{
 				returnVal += "<INPUT style='border-width: 1px' size='" + maxCharLength + "' READONLY VALUE='" + (dataVal + "") + "'>";
 			}
