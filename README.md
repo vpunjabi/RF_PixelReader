@@ -1,6 +1,6 @@
 RF_PixelReader
 ==============
-Here is the preliminary document explanining how to download and install the Rocket Fuel Pixel Reader ("Insert clever name here"):
+Here is the preliminary document explanining how to download and install the Rocket Fuel Pixel Reader - PULSAR:
 
 <b>Load the extension</b>
 
