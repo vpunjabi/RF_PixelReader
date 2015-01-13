@@ -48,15 +48,20 @@ function isPixelUrl(url){
 
 var colorSwatch = ["#00CCFF", "#99CCFF"];
 var rowCounter;
+var maxURLLength = 1900;
 
 function formatData(pageDetails){
-	var returnVal = "<h3>!{PixelId}<span class='right'>!{HTTPCode}</span></h3><div><p>!{DETAILS}</p><p>!{PixelURL}</p></div>";
+	//<span class='right'>!{HTTPCode}</span>
+	var returnVal = "<h3>!{PixelId}</h3><div><p>!{DETAILS}</p><p>!{PixelURL}</p></div>";
 	rowCounter = 0;
 
 	if(pageDetails && pageDetails.url && pageDetails.url.length > 0){
-		returnVal = returnVal.replace("!{PixelId}", getPixelId(pageDetails.url)).replace("!{HTTPCode}", getStatusCode(pageDetails.statusLine));
+		returnVal = returnVal.replace("!{PixelId}", getPixelId(pageDetails.url));
+		//.replace("!{HTTPCode}", getStatusCode(pageDetails.statusLine));
 
 		var params = getPixelDetails(pageDetails.url);
+		params["HTTP Status Code"] = getStatusCode(pageDetails.statusLine);
+		params["URL Length"] = pageDetails.url.length;
 		var pixelDisplay = [];
 
 
@@ -77,6 +82,9 @@ function formatData(pageDetails){
 		}
 		details += "</table>";
 		returnVal = returnVal.replace("!{DETAILS}", details).replace("!{PixelURL}", "<br /><span class='left' style='font-size:12px'><strong>Request URL:</strong></span><br />" + formatRowDataToHTML(pageDetails.url, 42));
+		if(pageDetails.url.length > maxURLLength){
+			returnVal += "<br>" + formatRowDataToHTML("WARNING: URL LENGTH CLOSE TO OR GREATER THAN ALLOWED MAXIMIUM URL LENGTH", 42, "#FF0000");
+		}
 	}else{
 		returnVal = "";
 	}
