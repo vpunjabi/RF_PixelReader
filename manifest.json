@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "RF Pixel Reader - Cosmo",
-  "description": "Detects RF pixels and displays their param values",
+  "name": "Pulse",
+  "description": "Detects Rocket Fuel Inc. pixels and displays their parameter values",
   "version": "1.0",
   "permissions": [
     "identity",
