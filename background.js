@@ -66,7 +66,7 @@ function formatData(pageDetails){
 
 
 
-		var details = '<table cellspacing="0" cellpadding="6" style="width:100%; font-size:14px">';
+		var details = '<table cellspacing="0" cellpadding="6" style="width:111%; margin-left:-19px; font-size:14px">';
 		for(var i in params){
 			var rowColor = (rowCounter++)%colorSwatch.length;
 			details += "<tr style='background-color: " + colorSwatch[rowColor] + ";'>";
@@ -81,9 +81,9 @@ function formatData(pageDetails){
 			details += "</tr>";
 		}
 		details += "</table>";
-		returnVal = returnVal.replace("!{DETAILS}", details).replace("!{PixelURL}", "<br /><span class='left' style='font-size:12px'><strong>Request URL:</strong></span><br />" + formatRowDataToHTML(pageDetails.url, 42));
+		returnVal = returnVal.replace("!{DETAILS}", details).replace("!{PixelURL}", "<br /><span class='left' style="margin-left:-19px;" style='font-size:12px'><strong>Request URL:</strong></span><br />" + formatRowDataToHTML(pageDetails.url, 60));
 		if(pageDetails.url.length > maxURLLength){
-			returnVal += "<br>" + formatRowDataToHTML("WARNING: URL LENGTH CLOSE TO OR GREATER THAN ALLOWED MAXIMIUM URL LENGTH", 42, "#FF0000");
+			returnVal += "<br>" + formatRowDataToHTML("WARNING: URL LENGTH CLOSE TO OR GREATER THAN ALLOWED MAXIMIUM URL LENGTH", 60, "#FF0000");
 		}
 	}else{
 		returnVal = "";
